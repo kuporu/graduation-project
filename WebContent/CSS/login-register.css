@@ -1,0 +1,18 @@
+.sub {
+	margin-top: 2%;
+	height: 96px;
+	font-size: 76px;
+	width: 99%;
+	background: rgba(0, 0, 0, 0);
+}
+
+.sp {
+	width: 40%;
+	float: left;
+	line-height: 96px;
+	font-size: 96px;
+}
+
+body {
+	background-size: cover;
+}

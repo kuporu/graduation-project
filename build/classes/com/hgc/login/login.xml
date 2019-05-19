@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+   "-//Apache Software Foundation//DTD Struts Configuration 2.5//EN"
+   "http://struts.apache.org/dtds/struts-2.5.dtd">
+<struts>
+	<constant name="struts.devMode" value="true" />
+	<package name="helloworld" extends="struts-default"
+		namespace="/login">
+
+		<interceptors><!-- 1.在要拦截的action标签所在的package标签中声明拦截器 -->
+			<!-- 配置路径时复制全路径要在类中去复制，注意不要带有.class -->
+			<interceptor name="loginInter"
+				class="com.hgc.intercepter.LoginIntercepter"></interceptor>
+		</interceptors>
+		<!--全局结果页面 -->
+		<!--<global-results> 全局结果页面 <result name="success">/success.jsp</result> 
+			<result name="failed">/failed.jsp</result> <result name="login">/index.html</result> 
+			</global-results> -->
+
+		<global-allowed-methods>login,register,up,down,usePython</global-allowed-methods>
+
+		<action name="*" class="com.hgc.login.Login" method="{1}">
+
+			<!-- 2.使用自定义拦截器 -->
+			<interceptor-ref name="loginInter">
+				<!-- login,register方法不进行拦截,多个方法使用逗号，不能分开写 -->
+				<param name="excludeMethods">login,register</param>
+			</interceptor-ref>
+
+			<!-- 3.手动添加默认拦截器 -->
+			<interceptor-ref name="defaultStack"></interceptor-ref>
+
+			<result name="success">/success-copy.jsp</result>
+			<result name="error">/failed.jsp</result>
+			<result name="login">/index.jsp</result>
+			<result name="response">/response.jsp</result>
+			<result name="disnet">/disnet.jsp</result>
+		</action>
+	</package>
+</struts>

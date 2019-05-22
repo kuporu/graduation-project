@@ -1,3 +1,4 @@
+<%@page import="org.apache.jasper.tagplugins.jstl.core.ForEach"%>
 <%@page import="com.hgc.entity.ProviceCount"%>
 <%@ page language="java" contentType="text/html; charset=utf-8"
 	import="java.util.List" import="com.hgc.entity.CityCount"
@@ -47,7 +48,8 @@
 </style>
 </head>
 
-<% String table=(String)request.getAttribute("table"); //表名，用于显示时间%>
+<% String table=(String)request.getAttribute("table"); //特定表名，用于显示日期%>
+<% List<String> tables=(List<String>)request.getAttribute("tables"); //所有表名，用于显示所有日期%>
 <% List<CityCount> lCityCounts= (List<CityCount>)request.getAttribute("cityCount");//表字段值集合，用于下拉数据的显示和echarts数据的加载%>
 <% List<ProviceCount> proviceCounts= (List<ProviceCount>)request.getAttribute("provinceCount");%>
 
@@ -58,16 +60,30 @@
 		<div class="pic"></div>
 	</div>
 	<!-- page按钮，ul为其展开列表，使用a标签请求服务器，服务器返回再重新加载success-copy页面 -->
-	<button type="button" class="btn btn-info"
+	<div><button type="button" class="btn btn-info"
 		style="position: absolute; top: 30%; z-index: 1; width: 7%"
 		data-toggle="dropdown">page</button>
 	<ul class="dropdown-menu"
-		style="position: absolute; top: 35%; z-index: 1; width: 5%">
+		style="position: absolute; top: 30%; z-index: 1; width: 5%; left: 7%;">
 		<li><a href="${pageContext.request.contextPath}/login/down">
 				previous page</a></li>
 		<li><a href="${pageContext.request.contextPath}/login/up">
 				next page</a></li>
 	</ul>
+	</div>
+	
+	<!-- date按钮，ul为其展开列表，使用a标签请求服务器，服务器返回再重新加载success-copy页面 -->
+	<div><button type="button" class="btn btn-primary"
+		style="position: absolute; top: 35%; z-index: 1; width: 7%"
+		data-toggle="dropdown">date</button>
+	<ul class="dropdown-menu"
+		style="position: absolute; top: 35%; z-index: 1; width: 5%; left: 7%;">
+		<% for(String item:tables){out.print("<li><a href='choice?tableName="+item+"'>"+item+"</a></li>");} %>
+		
+	</ul>
+	</div>
+	
+	
 
 	<!-- City按钮，显示城市数据 -->
 	<button type="button" class="btn btn-danger" data-toggle="modal"

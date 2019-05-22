@@ -15,6 +15,6 @@ a {
 </head>
 <body>
 	<p style="font-size: 66px">数据采集中，页面关闭后点击返回 : )</p>
-	
+	<a href="${pageContext.request.contextPath}/login/forLogin">返回</a>
 </body>
 </html>

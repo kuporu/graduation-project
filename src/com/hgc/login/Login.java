@@ -29,6 +29,7 @@ public class Login extends ActionSupport {
 	private String password;
 	private String reusername;
 	private String repassword;
+	private String tableName;
 
 	private String url;
 	private Boolean flag = false;
@@ -38,26 +39,30 @@ public class Login extends ActionSupport {
 	// page页面下翻
 	public String down() {
 		List<String> tableList = DataUtils.getTableName();
-		ActionContext actionContext = ActionContext.getContext();
-		Map<String, Object> request = (Map) actionContext.get("request");
+//		ActionContext actionContext = ActionContext.getContext();
+//		Map<String, Object> request = (Map) actionContext.get("request");
 		int indexNow = getIndex() - 1;
-		if (indexNow >= 0) {
-			request.put("table", tableList.get(indexNow));
+		if (indexNow >= 0) {	
 			setIndex(indexNow);
-
 			List<CityCount> liCityCounts = DataUtils.getCityCount(tableList.get(indexNow));
-			request.put("cityCount", liCityCounts);
-
 			List<ProviceCount> lProviceCounts = getAndUpdateProviceCount(liCityCounts);
-			request.put("provinceCount", lProviceCounts);
+			
+//			request.put("table", tableList.get(indexNow));
+//			request.put("cityCount", liCityCounts);
+//			request.put("tables", tableList);
+//			request.put("provinceCount", lProviceCounts);
+			
+			date(lProviceCounts,liCityCounts,tableList.get(getIndex()),tableList);
 		} else {
-			request.put("table", tableList.get(getIndex()));
-
 			List<CityCount> liCityCounts = DataUtils.getCityCount(tableList.get(getIndex()));
-			request.put("cityCount", liCityCounts);
-
 			List<ProviceCount> lProviceCounts = getAndUpdateProviceCount(liCityCounts);
-			request.put("provinceCount", lProviceCounts);
+			
+//			request.put("table", tableList.get(getIndex()));
+//			request.put("cityCount", liCityCounts);
+//			request.put("tables", tableList);
+//			request.put("provinceCount", lProviceCounts);
+			
+			date(lProviceCounts,liCityCounts,tableList.get(getIndex()),tableList);
 		}
 		return SUCCESS;
 	}
@@ -65,44 +70,75 @@ public class Login extends ActionSupport {
 	// page页面上翻
 	public String up() {
 		List<String> tableList = DataUtils.getTableName();
-		ActionContext actionContext = ActionContext.getContext();
-		Map<String, Object> request = (Map) actionContext.get("request");
+//		ActionContext actionContext = ActionContext.getContext();
+//		Map<String, Object> request = (Map) actionContext.get("request");
 		int indexNow = getIndex() + 1;
-
+		
 		if (indexNow < tableList.size()) {
-			request.put("table", tableList.get(indexNow));
+			
 			setIndex(indexNow);
-
 			List<CityCount> liCityCounts = DataUtils.getCityCount(tableList.get(indexNow));
 			List<ProviceCount> lProviceCounts = getAndUpdateProviceCount(liCityCounts);
-			request.put("provinceCount", lProviceCounts);
-
-			request.put("cityCount", liCityCounts);
+			
+//			request.put("table", tableList.get(indexNow));
+//			request.put("tables", tableList);
+//			request.put("provinceCount", lProviceCounts);
+//			request.put("cityCount", liCityCounts);
+			
+			date(lProviceCounts,liCityCounts,tableList.get(getIndex()),tableList);
 		} else {
-			request.put("table", tableList.get(getIndex()));
+			
 
 			List<CityCount> liCityCounts = DataUtils.getCityCount(tableList.get(getIndex()));
-			request.put("cityCount", liCityCounts);
-
 			List<ProviceCount> lProviceCounts = getAndUpdateProviceCount(liCityCounts);
-			request.put("provinceCount", lProviceCounts);
+			
+//			request.put("cityCount", liCityCounts);
+//			request.put("tables", tableList);
+//			request.put("table", tableList.get(getIndex()));
+//			request.put("provinceCount", lProviceCounts);
+			
+			date(lProviceCounts,liCityCounts,tableList.get(getIndex()),tableList);
 		}
 		return SUCCESS;
+	}
+	
+	//日期选择
+	public String choice() throws Exception {
+		
+		List<String> tableList = DataUtils.getTableName();
+		
+//		ActionContext actionContext = ActionContext.getContext();
+//		Map<String, Object> request = (Map) actionContext.get("request");
+			
+		List<CityCount> liCityCounts = DataUtils.getCityCount(tableName);
+		List<ProviceCount> lProviceCounts = getAndUpdateProviceCount(liCityCounts);
+		
+//		request.put("tables", tableList);
+//		request.put("table", tableName);
+//		request.put("provinceCount", lProviceCounts);
+//		request.put("cityCount", liCityCounts);
+		date(lProviceCounts,liCityCounts,tableName,tableList);
+		
+		return SUCCESS;
+
 	}
 
 	// 登录
 	public String login() throws Exception {
-//		System.out.println(ServletActionContext.getServletContext().getInitParameter("user"));
 		List<String> tableList = DataUtils.getTableName();
-		ActionContext actionContext = ActionContext.getContext();
-		Map<String, Object> request = (Map) actionContext.get("request");
+//		ActionContext actionContext = ActionContext.getContext();
+//		Map<String, Object> request = (Map) actionContext.get("request");
 		String firstTable = tableList.get(0);
-		request.put("table", firstTable);
 		setIndex(0);
 		List<CityCount> liCityCounts = DataUtils.getCityCount(firstTable);
 		List<ProviceCount> lProviceCounts = getAndUpdateProviceCount(liCityCounts);
-		request.put("provinceCount", lProviceCounts);
-		request.put("cityCount", liCityCounts);
+		
+//		request.put("provinceCount", lProviceCounts);
+//		request.put("cityCount", liCityCounts);
+//		request.put("table", firstTable);
+//		request.put("tables", tableList);
+		
+		date(lProviceCounts,liCityCounts,firstTable,tableList);
 
 		String hql = "from User where username=?1 and password=?2";// 这里有个坑，hql语句(面向对象的查询语言，和SQL类似)，其中from后接的是实体名，不是数据库表名
 		Query query = session.createQuery(hql);
@@ -116,11 +152,45 @@ public class Login extends ActionSupport {
 		if (!list.isEmpty()) {// 这里有个坑，不能使用==null，null的时候还没有分配内存，空的时候是已经分配了内存只是还没有写入值
 			flag = true;
 		}
+		
+		HttpSession session=ServletActionContext.getRequest().getSession();
+		if(session.getAttribute("username")!=null) {
+			flag = true;
+		}
+		
 		if (flag)
 			return SUCCESS;
 		else
 			return ERROR;
 
+	}
+	
+	//点击返回后跳转界面，使用login方法 session会失效，我不太清楚 :(
+	public String forLogin() {
+		List<String> tableList = DataUtils.getTableName();
+//		ActionContext actionContext = ActionContext.getContext();
+//		Map<String, Object> request = (Map) actionContext.get("request");
+		String firstTable = tableList.get(0);
+		setIndex(0);
+		List<CityCount> liCityCounts = DataUtils.getCityCount(firstTable);
+		List<ProviceCount> lProviceCounts = getAndUpdateProviceCount(liCityCounts);
+		
+//		request.put("provinceCount", lProviceCounts);
+//		request.put("cityCount", liCityCounts);
+//		request.put("table", firstTable);
+//		request.put("tables", tableList);
+		date(lProviceCounts,liCityCounts,firstTable,tableList);
+		
+		return SUCCESS;
+	}
+	
+	private void date(List<ProviceCount> lProviceCounts,List<CityCount> liCityCounts,String table,List<String> tables) {
+		ActionContext actionContext = ActionContext.getContext();
+		Map<String, Object> request = (Map) actionContext.get("request");
+		request.put("provinceCount", lProviceCounts);
+		request.put("cityCount", liCityCounts);
+		request.put("table", table);
+		request.put("tables", tables);
 	}
 
 	// 注册
@@ -289,5 +359,13 @@ public class Login extends ActionSupport {
 
 	public void setUrl(String url) {
 		this.url = url;
+	}
+
+	public String getTableName() {
+		return tableName;
+	}
+
+	public void setTableName(String tableName) {
+		this.tableName = tableName;
 	}
 }

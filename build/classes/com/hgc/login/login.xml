@@ -17,7 +17,7 @@
 			<result name="failed">/failed.jsp</result> <result name="login">/index.html</result> 
 			</global-results> -->
 
-		<global-allowed-methods>login,register,up,down,usePython</global-allowed-methods>
+		<global-allowed-methods>login,register,up,down,usePython,choice,forLogin</global-allowed-methods>
 
 		<action name="*" class="com.hgc.login.Login" method="{1}">
 

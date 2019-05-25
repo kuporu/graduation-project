@@ -12,14 +12,17 @@
 		<welcome-file>default.htm</welcome-file>
 		<welcome-file>default.jsp</welcome-file>
 	</welcome-file-list>
-	<error-page>
-		<error-code>404</error-code>
-		<location>/error.jsp</location>
-	</error-page>
-	<error-page>
-		<exception-type>com.opensymphony.xwork2.config.ConfigurationException</exception-type>
-		<location>/error.jsp</location>
-	</error-page>
+	<servlet>  
+
+    <servlet-name>log4j</servlet-name>  
+    <servlet-class>com.hgc.log.Log4jInitServlet</servlet-class>  
+    <init-param>  
+        <param-name>configfile</param-name>  
+        <param-value>WEB-INF/log4jConfig.properties</param-value>  
+    </init-param> 
+    <load-on-startup>1</load-on-startup>  
+  </servlet>
+  
 	<filter>
 		<filter-name>struts2</filter-name>
 		<filter-class>org.apache.struts2.dispatcher.filter.StrutsPrepareAndExecuteFilter</filter-class>
@@ -43,5 +46,9 @@
   <context-param>
            <param-name>database</param-name>
            <param-value>graduation</param-value>
+  </context-param>
+  <context-param>
+  			<param-name>python</param-name>
+  			<param-value>D:\\graduation\\毕业论文\\city_count\\finall_city_count_time.py</param-value>
   </context-param>
 </web-app>

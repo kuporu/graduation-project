@@ -7,6 +7,7 @@ import java.util.regex.Pattern;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.collections4.IteratorUtils;
+import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -35,32 +36,22 @@ public class Login extends ActionSupport {
 	private Boolean flag = false;
 	private Session session = HibernateUtils.getSessionFactory().openSession();
 	private static int index;// Struts2会对每一个请求,产生一个Action的实例来处理.为多实例设置为静态属性
+	
+	private static Logger logger = Logger.getLogger("ScriptMaint");
 
 	// page页面下翻
 	public String down() {
 		List<String> tableList = DataUtils.getTableName();
-//		ActionContext actionContext = ActionContext.getContext();
-//		Map<String, Object> request = (Map) actionContext.get("request");
 		int indexNow = getIndex() - 1;
 		if (indexNow >= 0) {	
 			setIndex(indexNow);
 			List<CityCount> liCityCounts = DataUtils.getCityCount(tableList.get(indexNow));
 			List<ProviceCount> lProviceCounts = getAndUpdateProviceCount(liCityCounts);
 			
-//			request.put("table", tableList.get(indexNow));
-//			request.put("cityCount", liCityCounts);
-//			request.put("tables", tableList);
-//			request.put("provinceCount", lProviceCounts);
-			
 			date(lProviceCounts,liCityCounts,tableList.get(getIndex()),tableList);
 		} else {
 			List<CityCount> liCityCounts = DataUtils.getCityCount(tableList.get(getIndex()));
 			List<ProviceCount> lProviceCounts = getAndUpdateProviceCount(liCityCounts);
-			
-//			request.put("table", tableList.get(getIndex()));
-//			request.put("cityCount", liCityCounts);
-//			request.put("tables", tableList);
-//			request.put("provinceCount", lProviceCounts);
 			
 			date(lProviceCounts,liCityCounts,tableList.get(getIndex()),tableList);
 		}
@@ -70,8 +61,6 @@ public class Login extends ActionSupport {
 	// page页面上翻
 	public String up() {
 		List<String> tableList = DataUtils.getTableName();
-//		ActionContext actionContext = ActionContext.getContext();
-//		Map<String, Object> request = (Map) actionContext.get("request");
 		int indexNow = getIndex() + 1;
 		
 		if (indexNow < tableList.size()) {
@@ -80,22 +69,12 @@ public class Login extends ActionSupport {
 			List<CityCount> liCityCounts = DataUtils.getCityCount(tableList.get(indexNow));
 			List<ProviceCount> lProviceCounts = getAndUpdateProviceCount(liCityCounts);
 			
-//			request.put("table", tableList.get(indexNow));
-//			request.put("tables", tableList);
-//			request.put("provinceCount", lProviceCounts);
-//			request.put("cityCount", liCityCounts);
-			
 			date(lProviceCounts,liCityCounts,tableList.get(getIndex()),tableList);
 		} else {
 			
 
 			List<CityCount> liCityCounts = DataUtils.getCityCount(tableList.get(getIndex()));
 			List<ProviceCount> lProviceCounts = getAndUpdateProviceCount(liCityCounts);
-			
-//			request.put("cityCount", liCityCounts);
-//			request.put("tables", tableList);
-//			request.put("table", tableList.get(getIndex()));
-//			request.put("provinceCount", lProviceCounts);
 			
 			date(lProviceCounts,liCityCounts,tableList.get(getIndex()),tableList);
 		}
@@ -105,18 +84,10 @@ public class Login extends ActionSupport {
 	//日期选择
 	public String choice() throws Exception {
 		
-		List<String> tableList = DataUtils.getTableName();
-		
-//		ActionContext actionContext = ActionContext.getContext();
-//		Map<String, Object> request = (Map) actionContext.get("request");
-			
+		List<String> tableList = DataUtils.getTableName();			
 		List<CityCount> liCityCounts = DataUtils.getCityCount(tableName);
 		List<ProviceCount> lProviceCounts = getAndUpdateProviceCount(liCityCounts);
 		
-//		request.put("tables", tableList);
-//		request.put("table", tableName);
-//		request.put("provinceCount", lProviceCounts);
-//		request.put("cityCount", liCityCounts);
 		date(lProviceCounts,liCityCounts,tableName,tableList);
 		
 		return SUCCESS;
@@ -126,17 +97,10 @@ public class Login extends ActionSupport {
 	// 登录
 	public String login() throws Exception {
 		List<String> tableList = DataUtils.getTableName();
-//		ActionContext actionContext = ActionContext.getContext();
-//		Map<String, Object> request = (Map) actionContext.get("request");
 		String firstTable = tableList.get(0);
 		setIndex(0);
 		List<CityCount> liCityCounts = DataUtils.getCityCount(firstTable);
 		List<ProviceCount> lProviceCounts = getAndUpdateProviceCount(liCityCounts);
-		
-//		request.put("provinceCount", lProviceCounts);
-//		request.put("cityCount", liCityCounts);
-//		request.put("table", firstTable);
-//		request.put("tables", tableList);
 		
 		date(lProviceCounts,liCityCounts,firstTable,tableList);
 
@@ -148,6 +112,8 @@ public class Login extends ActionSupport {
 		query.setParameter(1, username);
 		query.setParameter(2, password);
 
+		logger.debug("登录成功了");
+		
 		List list = query.list();
 		if (!list.isEmpty()) {// 这里有个坑，不能使用==null，null的时候还没有分配内存，空的时候是已经分配了内存只是还没有写入值
 			flag = true;
@@ -168,17 +134,11 @@ public class Login extends ActionSupport {
 	//点击返回后跳转界面，使用login方法 session会失效，我不太清楚 :(
 	public String forLogin() {
 		List<String> tableList = DataUtils.getTableName();
-//		ActionContext actionContext = ActionContext.getContext();
-//		Map<String, Object> request = (Map) actionContext.get("request");
 		String firstTable = tableList.get(0);
 		setIndex(0);
 		List<CityCount> liCityCounts = DataUtils.getCityCount(firstTable);
 		List<ProviceCount> lProviceCounts = getAndUpdateProviceCount(liCityCounts);
-		
-//		request.put("provinceCount", lProviceCounts);
-//		request.put("cityCount", liCityCounts);
-//		request.put("table", firstTable);
-//		request.put("tables", tableList);
+
 		date(lProviceCounts,liCityCounts,firstTable,tableList);
 		
 		return SUCCESS;
@@ -242,20 +202,22 @@ public class Login extends ActionSupport {
 		}
 	}
 
-	// 获取新闻源
+	// 调用python获取新闻源
 	public String usePython() {
 		if(NetworkUtils.isConnect()) {
 			try {
 				//删除数据库
 				DataUtils.dropTable();
-				//调用Python脚本获取新闻源
+				
 				String exe = "python";
-				String command = "D:\\graduation\\毕业论文\\city_count\\finall_city_count_time.py";
+				String command=ServletActionContext.getServletContext().getInitParameter("python");
 				String[] cmdArr = new String[] { exe, command, url };
-				Runtime.getRuntime().exec(cmdArr);
+				Process pr=Runtime.getRuntime().exec(cmdArr);
+				//等待子进程执行完
+				pr.waitFor();
 				return "response";
 			} catch (Exception ex) {
-				System.out.println("我莫名其妙的报错了");
+				logger.debug(ex.toString());
 				return ERROR;
 			}
 		}else {

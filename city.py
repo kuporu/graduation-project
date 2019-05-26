@@ -23,6 +23,7 @@ def getjson(city):
     response=requests.get(url=url,params=params,headers=headers)
     html=response.text
 #python解析json  https://www.cnblogs.com/wangyayun/p/6699184.html?utm_source=tuicool&utm_medium=referral
+#将json字符串转换为Python对象
     decodejson=json.loads(html)
     return decodejson
 #连接数据库，将数据插入数据库表中
